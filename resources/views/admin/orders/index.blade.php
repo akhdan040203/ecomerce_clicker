@@ -50,9 +50,9 @@
                                 </span>
                             </td>
                             <td class="px-8 py-5 text-right">
-                                <button class="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-sky-600 transition-colors">
-                                    Details
-                                </button>
+                                <a href="/admin/orders/{{ $order->id }}" class="text-xs font-black uppercase tracking-widest text-sky-600 hover:text-sky-700 transition-colors">
+                                    View Details
+                                </a>
                             </td>
                         </tr>
                         @endforeach

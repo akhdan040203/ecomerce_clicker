@@ -22,6 +22,12 @@ class CheckoutController extends Controller
 
     public function checkout(Request $request)
     {
+        $request->validate([
+            'shipping_name' => 'required|string|max:255',
+            'shipping_phone' => 'required|string|max:20',
+            'shipping_address' => 'required|string',
+        ]);
+
         $user = $request->user();
         $cartItems = Cart::where('user_id', $user->id)->with('product')->get();
 
@@ -37,13 +43,15 @@ class CheckoutController extends Controller
         });
 
         // Use a transaction to ensure data consistency
-        return DB::transaction(function () use ($user, $cartItems, $totalPrice) {
+        return DB::transaction(function () use ($user, $cartItems, $totalPrice, $request) {
             $order = Order::create([
                 'user_id' => $user->id,
                 'order_number' => 'ORD-' . strtoupper(Str::random(10)),
+                'shipping_name' => $request->shipping_name,
+                'shipping_phone' => $request->shipping_phone,
                 'total_price' => $totalPrice,
                 'status' => 'pending',
-                'shipping_address' => $user->address ?? 'Default Address'
+                'shipping_address' => $request->shipping_address
             ]);
 
             foreach ($cartItems as $item) {

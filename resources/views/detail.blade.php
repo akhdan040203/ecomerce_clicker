@@ -57,6 +57,26 @@
                     <span class="bg-sky-600 text-white text-[10px] font-black px-2 py-1 rounded inline-block uppercase tracking-widest ml-2">Sale</span>
                 </div>
 
+                <!-- Stock Information -->
+                <div class="mb-6 pb-6 border-b border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5" :class="product.stock > 10 ? 'text-emerald-500' : (product.stock > 0 ? 'text-amber-500' : 'text-rose-500')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-widest" :class="product.stock > 10 ? 'text-emerald-600' : (product.stock > 0 ? 'text-amber-600' : 'text-rose-600')">
+                                <span x-show="product.stock > 0">
+                                    <span x-text="product.stock"></span> Units Available
+                                </span>
+                                <span x-show="product.stock === 0">Out of Stock</span>
+                            </p>
+                            <p class="text-[10px] text-slate-400 font-bold mt-0.5" x-show="product.stock > 0 && product.stock <= 10">
+                                Hurry! Only a few left in stock
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="text-xs text-slate-500 font-bold mb-10 pb-8 border-b border-gray-100 leading-relaxed">
                     <span class="text-sky-600 cursor-pointer hover:underline">Shipping</span> calculated at checkout.
                 </div>
@@ -94,15 +114,20 @@
 
                     <div class="pt-6 space-y-3">
                         <button @click="addToCart($event)" 
-                                class="w-full bg-slate-900 text-white py-4 rounded-xl font-black text-sm uppercase tracking-[0.2em] hover:bg-sky-600 transition-all shadow-xl shadow-gray-200 disabled:opacity-50 active:scale-[0.98]"
-                                :disabled="adding">
-                            <span x-show="!adding" class="flex items-center justify-center gap-2">
+                                class="w-full bg-slate-900 text-white py-4 rounded-xl font-black text-sm uppercase tracking-[0.2em] hover:bg-sky-600 transition-all shadow-xl shadow-gray-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                                :disabled="adding || product.stock === 0">
+                            <span x-show="!adding && product.stock > 0" class="flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                 Add to cart
                             </span>
                             <span x-show="adding">Adding...</span>
+                            <span x-show="product.stock === 0 && !adding" class="flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                Out of Stock
+                            </span>
                         </button>
-                        <button class="w-full bg-black text-white py-4 rounded-md font-black text-sm uppercase tracking-[0.2em] hover:bg-slate-800 transition-all">
+                        <button class="w-full bg-black text-white py-4 rounded-md font-black text-sm uppercase tracking-[0.2em] hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                :disabled="product.stock === 0">
                             Buy it now
                         </button>
                     </div>

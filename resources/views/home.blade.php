@@ -137,28 +137,20 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <template x-for="category in categories" :key="category.id">
                     <a :href="'/category/' + category.slug" 
-                       class="relative group overflow-hidden rounded-[2.5rem] bg-white shadow-lg hover:shadow-2xl transition-all duration-500 h-[300px]">
+                       class="relative group overflow-hidden rounded-[2.5rem] bg-white shadow-lg hover:shadow-2xl transition-all duration-500 h-[250px] flex items-center justify-center border border-gray-50">
                         <!-- Background Accent -->
                         <div :class="getCategoryStyle(category.slug)" class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity"></div>
                         
-                        <div class="relative h-full p-8 flex flex-col items-center justify-between text-center">
-                            <div class="w-full flex justify-center mt-4">
-                                <div class="w-32 h-32 rounded-3xl bg-white shadow-xl flex items-center justify-center p-4 md:group-hover:scale-110 md:group-hover:-rotate-3 transition-transform duration-500">
-                                    <img :src="getCategoryImage(category.slug)" :alt="category.name" class="w-20 h-20 object-contain">
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <h3 class="text-2xl font-black text-slate-900 group-hover:text-sky-600 transition-colors" x-text="category.name"></h3>
-                                <div class="mt-2 flex items-center justify-center gap-2 text-sky-600 font-bold text-sm uppercase tracking-widest opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                                    Explore Now
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                </div>
+                        <div class="relative z-10 text-center px-6">
+                            <h3 class="text-3xl font-black text-slate-900 group-hover:text-sky-600 transition-colors uppercase tracking-widest leading-tight" x-text="category.name"></h3>
+                            <div class="mt-3 flex items-center justify-center gap-2 text-sky-600 font-bold text-xs uppercase tracking-[0.3em] opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                Explore Now
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </div>
                         </div>
                         
                         <!-- Decorative Element -->
-                        <div class="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-slate-900/5 md:group-hover:scale-150 transition-transform duration-700"></div>
+                        <div class="absolute -bottom-6 -right-6 w-32 h-32 rounded-full bg-slate-900/5 group-hover:scale-125 transition-transform duration-700"></div>
                     </a>
                 </template>
             </div>
@@ -295,11 +287,14 @@ function homePage() {
 
         getCategoryStyle(slug) {
             const styles = {
-                'keyboards': 'bg-gradient-to-br from-pink-400 to-rose-500',
-                'switches': 'bg-gray-100',
-                'keycaps': 'bg-gradient-to-br from-teal-400 to-cyan-500'
+                'keyboards': 'bg-gradient-to-br from-pink-100 to-rose-200',
+                'switches': 'bg-gradient-to-br from-amber-100 to-orange-200',
+                'keycaps': 'bg-gradient-to-br from-teal-100 to-cyan-200',
+                'mouse': 'bg-gradient-to-br from-indigo-100 to-purple-200',
+                'headseat': 'bg-gradient-to-br from-emerald-100 to-green-200',
+                'accessories': 'bg-gradient-to-br from-slate-100 to-gray-300'
             };
-            return styles[slug] || 'bg-white';
+            return styles[slug] || 'bg-gray-100';
         },
 
         async addToCart(e, product) {

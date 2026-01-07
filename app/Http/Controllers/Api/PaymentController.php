@@ -53,6 +53,28 @@ class PaymentController extends Controller
 
             $order->save();
 
+            // Reduce stock automatically when payment is successful
+            if ($order->status === 'processing') {
+                $order->load('orderItems.product');
+                
+                foreach ($order->orderItems as $item) {
+                    if ($item->product) {
+                        $product = $item->product;
+                        $newStock = $product->stock - $item->quantity;
+                        
+                        // Prevent negative stock
+                        if ($newStock < 0) {
+                            $newStock = 0;
+                        }
+                        
+                        $product->stock = $newStock;
+                        $product->save();
+                        
+                        Log::info("Stock reduced for product {$product->name}: {$item->quantity} units. New stock: {$newStock}");
+                    }
+                }
+            }
+
             // Update or Create Payment record
             Payment::updateOrCreate(
                 ['order_id' => $order->id],

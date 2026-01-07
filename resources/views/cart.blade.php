@@ -37,53 +37,85 @@
                 </a>
             </div>
 
-            <!-- Cart Content -->
-            <div x-show="!loading && cartItems.length > 0" class="flex flex-col lg:flex-row gap-12">
-                <!-- Items List -->
-                <div class="flex-grow space-y-6">
-                    <template x-for="item in cartItems" :key="item.id">
-                        <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-50 flex flex-col sm:flex-row items-center gap-6 group hover:shadow-xl transition-all duration-500">
-                            <!-- Image -->
-                            <div class="w-32 h-32 bg-gray-50 rounded-3xl overflow-hidden flex-shrink-0 group-hover:bg-sky-50 transition-colors">
-                                <img :src="item.product.image || 'https://via.placeholder.com/300x300?text=' + item.product.name" 
-                                     :alt="item.product.name" 
-                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            </div>
+                <!-- Items List & Shipping Form -->
+                <div class="flex-grow space-y-8">
+                    <!-- Cart Items -->
+                    <div class="space-y-6">
+                        <template x-for="item in cartItems" :key="item.id">
+                            <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-50 flex flex-col sm:flex-row items-center gap-6 group hover:shadow-xl transition-all duration-500">
+                                <!-- Image -->
+                                <div class="w-32 h-32 bg-gray-50 rounded-3xl overflow-hidden flex-shrink-0 group-hover:bg-sky-50 transition-colors">
+                                    <img :src="item.product.image || 'https://via.placeholder.com/300x300?text=' + item.product.name" 
+                                         :alt="item.product.name" 
+                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                </div>
 
-                            <!-- Info -->
-                            <div class="flex-grow text-center sm:text-left">
-                                <span class="text-[10px] bg-sky-50 text-sky-600 font-bold px-2 py-1 rounded-md uppercase tracking-widest mb-2 inline-block" x-text="item.product.category.name"></span>
-                                <h3 class="text-xl font-bold text-slate-900 mb-1" x-text="item.product.name"></h3>
-                                <p class="text-sky-600 font-black" x-text="item.product.formatted_price"></p>
-                            </div>
+                                <!-- Info -->
+                                <div class="flex-grow text-center sm:text-left">
+                                    <span class="text-[10px] bg-sky-50 text-sky-600 font-bold px-2 py-1 rounded-md uppercase tracking-widest mb-2 inline-block" x-text="item.product.category.name"></span>
+                                    <h3 class="text-xl font-bold text-slate-900 mb-1" x-text="item.product.name"></h3>
+                                    <p class="text-sky-600 font-black" x-text="item.product.formatted_price"></p>
+                                </div>
 
-                            <!-- Quantity Controls -->
-                            <div class="flex items-center gap-4 bg-gray-100 rounded-2xl p-2">
-                                <button @click="updateQuantity(item.id, item.quantity - 1)" 
-                                        :disabled="item.quantity <= 1 || updating === item.id"
-                                        class="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm hover:text-blue-600 disabled:opacity-50 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 12H4" stroke-width="3" stroke-linecap="round"/></svg>
-                                </button>
-                                <span class="text-lg font-black w-8 text-center text-slate-900" x-text="item.quantity"></span>
-                                <button @click="updateQuantity(item.id, item.quantity + 1)" 
-                                        :disabled="updating === item.id"
-                                        class="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm hover:text-blue-600 disabled:opacity-50 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-width="3" stroke-linecap="round"/></svg>
-                                </button>
-                            </div>
+                                <!-- Quantity Controls -->
+                                <div class="flex items-center gap-4 bg-gray-100 rounded-2xl p-2">
+                                    <button @click="updateQuantity(item.id, item.quantity - 1)" 
+                                            :disabled="item.quantity <= 1 || updating === item.id"
+                                            class="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm hover:text-blue-600 disabled:opacity-50 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 12H4" stroke-width="3" stroke-linecap="round"/></svg>
+                                    </button>
+                                    <span class="text-lg font-black w-8 text-center text-slate-900" x-text="item.quantity"></span>
+                                    <button @click="updateQuantity(item.id, item.quantity + 1)" 
+                                            :disabled="updating === item.id"
+                                            class="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm hover:text-blue-600 disabled:opacity-50 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-width="3" stroke-linecap="round"/></svg>
+                                    </button>
+                                </div>
 
-                            <!-- Subtotal & Delete -->
-                            <div class="text-right sm:min-w-[150px]">
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Subtotal</p>
-                                <p class="text-xl font-black text-slate-900 mb-2" x-text="item.formatted_subtotal"></p>
-                                <button @click="removeItem(item.id)" 
-                                        class="text-red-400 hover:text-red-600 font-bold text-xs uppercase tracking-widest flex items-center gap-1 justify-end ml-auto group/del">
-                                    <svg class="w-4 h-4 group-hover/del:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                    Remove
-                                </button>
+                                <!-- Subtotal & Delete -->
+                                <div class="text-right sm:min-w-[150px]">
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Subtotal</p>
+                                    <p class="text-xl font-black text-slate-900 mb-2" x-text="item.formatted_subtotal"></p>
+                                    <button @click="removeItem(item.id)" 
+                                            class="text-red-400 hover:text-red-600 font-bold text-xs uppercase tracking-widest flex items-center gap-1 justify-end ml-auto group/del">
+                                        <svg class="w-4 h-4 group-hover/del:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Shipping Address Form -->
+                    <div class="bg-white rounded-[3rem] p-10 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-12 h-12 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-width="2" stroke-linecap="round"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2" stroke-linecap="round"/></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-black text-slate-900 leading-tight">Shipping Information</h3>
+                                <p class="text-sm text-slate-500">Where should we deliver your premium gear?</p>
                             </div>
                         </div>
-                    </template>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Recipient's Name</label>
+                                <input type="text" x-model="shipping.name" placeholder="Full Name" 
+                                       class="w-full px-6 py-4 bg-gray-50 border-transparent focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-100 rounded-2xl transition-all font-bold text-slate-900 outline-none">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Phone Number</label>
+                                <input type="text" x-model="shipping.phone" placeholder="0812xxxx" 
+                                       class="w-full px-6 py-4 bg-gray-50 border-transparent focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-100 rounded-2xl transition-all font-bold text-slate-900 outline-none">
+                            </div>
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Full Delivery Address</label>
+                                <textarea x-model="shipping.address" rows="3" placeholder="Jl. Example No. 123, City, Zip Code" 
+                                          class="w-full px-6 py-4 bg-gray-50 border-transparent focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-100 rounded-2xl transition-all font-bold text-slate-900 outline-none resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Order Summary -->
@@ -139,11 +171,15 @@ function cartPage() {
     return {
         cartItems: [],
         meta: {},
+        shipping: {
+            name: '',
+            phone: '',
+            address: ''
+        },
         loading: false,
         updating: null,
 
         async init() {
-            // Check auth first
             const token = localStorage.getItem('auth_token');
             if (!token) {
                 window.location.href = '/login';
@@ -151,6 +187,18 @@ function cartPage() {
             }
 
             await this.fetchCart();
+            await this.fetchUser();
+        },
+
+        async fetchUser() {
+            try {
+                const response = await axios.get('/user');
+                const user = response.data.data;
+                this.shipping.name = user.name || '';
+                this.shipping.address = user.address || '';
+            } catch (error) {
+                console.error('Error fetching user:', error);
+            }
         },
 
         async fetchCart() {
@@ -209,9 +257,25 @@ function cartPage() {
         },
 
         async handleCheckout() {
+            // Validations
+            if (!this.shipping.name || !this.shipping.phone || !this.shipping.address) {
+                toast.error('Please complete your shipping information first.');
+                
+                // Focus the empty field (bonus UX)
+                if (!this.shipping.name) document.querySelector('input[x-model="shipping.name"]').focus();
+                else if (!this.shipping.phone) document.querySelector('input[x-model="shipping.phone"]').focus();
+                else if (!this.shipping.address) document.querySelector('textarea[x-model="shipping.address"]').focus();
+                
+                return;
+            }
+
             this.loading = true;
             try {
-                const response = await axios.post('/checkout');
+                const response = await axios.post('/checkout', {
+                    shipping_name: this.shipping.name,
+                    shipping_phone: this.shipping.phone,
+                    shipping_address: this.shipping.address
+                });
                 const snapToken = response.data.data.snap_token;
 
                 window.snap.pay(snapToken, {
@@ -230,7 +294,6 @@ function cartPage() {
                     onClose: () => {
                         toast.warning('You closed the payment popup without finishing payment.');
                         this.loading = false;
-                        // Reload cart in case some items were cleared but payment not done
                         this.fetchCart();
                     }
                 });
